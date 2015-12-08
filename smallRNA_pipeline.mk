@@ -12,10 +12,10 @@
 ##                                                                                   ##
 ## Author: Rob Kitchen (rob.kitchen@yale.edu)                                        ##
 ##                                                                                   ##
-## Version 2.2.8 (2015-06-18)                                                        ##
+## Version 2.2.9 (2015-12-08)                                                        ##
 ##                                                                                   ##
 #######################################################################################
-EXCERPT_VERSION := 2.2.8
+EXCERPT_VERSION := 2.2.9
 
 
 ##
@@ -69,6 +69,13 @@ QFILTER_MIN_QUAL                := 20
 #MAP_EXOGENOUS      := off
 #MAP_EXOGENOUS      := miRNA
 MAP_EXOGENOUS      := on
+
+
+##
+## For sample quality control (QC)
+##
+MIN_TRANSCRIPTOME_MAPPED := 100000
+MIN_GENOME_TRANSCRIPTOME_RATIO := 0.5
 
 
 ##
@@ -406,6 +413,7 @@ endif
 COMPRESS_COMMAND := ls -lh $(OUTPUT_DIR)/$(SAMPLE_ID) | awk '{print $$9}' | grep "sense.grouped\|.readLengths.txt\|_fastqc.zip\|stat\|.counts\|.adapterSeq\|.qualityEncoding" | awk '{print "$(SAMPLE_ID)/"$$1}' > $(OUTPUT_DIR)/$(SAMPLE_ID)_filesToCompress.txt; \
 ls -lh $(OUTPUT_DIR)/$(SAMPLE_ID)/noGenome | awk '{print $$9}' | grep "sense.grouped\|stat" | awk '{print "$(SAMPLE_ID)/noGenome/"$$1}' >> $(OUTPUT_DIR)/$(SAMPLE_ID)_filesToCompress.txt; \
 echo $(SAMPLE_ID).log >> $(OUTPUT_DIR)/$(SAMPLE_ID)_filesToCompress.txt; \
+echo $(SAMPLE_ID).qcResult >> $(OUTPUT_DIR)/$(SAMPLE_ID)_filesToCompress.txt; \
 echo $(SAMPLE_ID).stats >> $(OUTPUT_DIR)/$(SAMPLE_ID)_filesToCompress.txt
 ifneq ($(CALIBRATOR_LIBRARY),NULL)
 	COMPRESS_COMMAND := $(COMPRESS_COMMAND); echo $(OUTPUT_DIR)/$(SAMPLE_ID)/$(SAMPLE_ID).clipped.filtered.calibratormapped.counts >> $(OUTPUT_DIR)/$(SAMPLE_ID)_filesToCompress.txt
@@ -907,6 +915,13 @@ $(OUTPUT_DIR)/$(SAMPLE_ID)/EXOGENOUS_genomes/ExogenousGenomicAlignments.result.t
 processSample: $(OUTPUT_DIR)/$(SAMPLE_ID)/$(PROCESS_SAMPLE_REQFILE)
 	## Copy Output descriptions file
 	cp $(SRNABENCH_LIBS)/sRNAbenchOutputDescription.txt $(OUTPUT_DIR)/$(SAMPLE_ID)/sRNAbenchOutputDescription.txt 
+	##
+	## Calculate QC result
+	cat $(OUTPUT_DIR)/$(SAMPLE_ID).stats | grep "^genome" | awk '{print $$2}' > $(OUTPUT_DIR)/tmp.txt
+	cat $(OUTPUT_DIR)/$(SAMPLE_ID).stats | grep "sense" | awk '{SUM+=$$2}END{print SUM}' >> $(OUTPUT_DIR)/tmp.txt
+	cat $(OUTPUT_DIR)/tmp.txt | tr '\n' '\t' | awk '{result="FAIL"; ratio=$$2/$$1; if(ratio>$(MIN_GENOME_TRANSCRIPTOME_RATIO) && $$2>$(MIN_TRANSCRIPTOME_MAPPED))result="PASS"}END{print "QC_result: "result"\nGenomeReads: "$$1"\nTranscriptomeReads: "$$2"\nTranscriptomeGenomeRatio: "ratio}' > $(OUTPUT_DIR)/$(SAMPLE_ID).qcResult
+	rm $(OUTPUT_DIR)/tmp.txt
+	##
 	## END PIPELINE
 	@echo -e "$(ts) SMRNAPIPELINE: END smallRNA-seq Pipeline for sample $(SAMPLE_ID)\n======================\n" >> $(OUTPUT_DIR)/$(SAMPLE_ID).log
 	@echo -e "$(ts) SMRNAPIPELINE: END\n" >> $(OUTPUT_DIR)/$(SAMPLE_ID).err
