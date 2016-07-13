@@ -207,19 +207,19 @@ MAX_MISMATCHES_EXOGENOUS         | &lt;int&gt;              | [default: 0] maxim
 
 <p>This archive contains the <strong>most commonly used results</strong> for this sample and is the only file required to run the mergePipelineRuns.R script described below for processing the output from multiple runs of the exceRpt pipeline (i.e. for multiple samples).  The contents of this archive are as follows:</p>
 
-<pre><code>[sampleID].log                               | Same as above
-[sampleID].stats                             | Same as above
-[sampleID].qcResult                          | Same as above
-[sampleID]/[sampleID].readCounts_*_sense.txt | Read counts of each annotated RNA using sense alignments
-[sampleID]/[sampleID].readCounts_*_sense.txt | Read counts of each annotated RNA using antisense alignments
-[sampleID]/[sampleID].*.coverage.txt         | Contains read-depth across all gencode transcripts
-[sampleID]/[sampleID].*.CIGARstats.txt       | Summary of the alignment characteristics for genome-mapped reads
-[sampleID]/[sampleID].*_fastqc.zip           | FastQC output both before and after UniVec/rRNA contaminant removal
-[sampleID]/[sampleID].*.readLengths.txt      | Counts of the number of reads of each length following adapter removal
-[sampleID]/[sampleID].*.counts               | Read counts mapped to UniVec &amp; rRNA (and calibrator oligo, if used) sequences
-[sampleID]/[sampleID].*.knownAdapterSeq      | 3' adapter sequence guessed (from known adapters) in this sample
-[sampleID]/[sampleID].*.adapterSeq           | 3' adapter used to clip the reads in this run
-[sampleID]/[sampleID].*.qualityEncoding      | PHRED encoding guessed for the input sequence reads 
+<pre><code>[sampleID].log                                   | Same as above
+[sampleID].stats                                 | Same as above
+[sampleID].qcResult                              | Same as above
+[sampleID]/[sampleID].readCounts_*_sense.txt     | Read counts of each annotated RNA using sense alignments
+[sampleID]/[sampleID].readCounts_*_antisense.txt | Read counts of each annotated RNA using antisense alignments
+[sampleID]/[sampleID].*.coverage.txt             | Contains read-depth across all gencode transcripts
+[sampleID]/[sampleID].*.CIGARstats.txt           | Summary of the alignment characteristics for genome-mapped reads
+[sampleID]/[sampleID].*_fastqc.zip               | FastQC output both before and after UniVec/rRNA contaminant removal
+[sampleID]/[sampleID].*.readLengths.txt          | Counts of the number of reads of each length following adapter removal
+[sampleID]/[sampleID].*.counts                   | Read counts mapped to UniVec &amp; rRNA (and calibrator oligo, if used) sequences
+[sampleID]/[sampleID].*.knownAdapterSeq          | 3' adapter sequence guessed (from known adapters) in this sample
+[sampleID]/[sampleID].*.adapterSeq               | 3' adapter used to clip the reads in this run
+[sampleID]/[sampleID].*.qualityEncoding          | PHRED encoding guessed for the input sequence reads 
 </code></pre>
 
 <h2>
